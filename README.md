@@ -1,2 +1,1 @@
-# GPA_announcement
-💬 BM Announcement System :)
+#💬 BM Announcement System :)

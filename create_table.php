@@ -12,6 +12,8 @@
     <!--Import JQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
+    <script src="js/del_btn.js"></script>
+    
     <script>
         let i=1;
         $(document).ready(function (){
@@ -23,17 +25,7 @@
             });
         });
 
-        function del_box(elm_id){
-            let btn = document.getElementById("del-btn-"+elm_id);
-            let box = document.getElementById("inp-box-"+elm_id);
-            let pbb = document.getElementById("row-box-"+elm_id);
-            let crd = document.getElementById("credit"+elm_id);
-            
-            pbb.parentNode.removeChild(pbb);
-            crd.parentNode.removeChild(crd);
-            btn.parentNode.removeChild(btn);
-            box.parentNode.removeChild(box);
-        }
+        
     </script>
 
 </head>
@@ -59,9 +51,7 @@
             <div class="" id="subject-form">
                 <div class="row d-grid" id="row-box-0" style="margin-top:0.3rem">
                     <div class="d-flex" style="padding:0">
-                        <input type="text" name="0" id="inp-box-0" class="form-control" placeholder="รหัสวิชา (Subject Code)" style="margin-right:0.2rem" required>
-                        <input type="text" name="c-0" class="form-control" style="margin-right:0.2rem" placeholder="หน่วยกิต (Credit)" id="credit-0" required>
-                        <button class="btn btn-danger" id="del-btn-0" type="button" onclick="del_box(0)">ลบ</button>
+                        
                     </div>
                 </div>
             </div>

@@ -1,6 +1,5 @@
 <?php 
     session_start();
-
     include 'db.php';
 
     $student_id = $_SESSION['id_name'];
@@ -21,6 +20,9 @@
 
     <!--Import JQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!--Import SweetAleart2-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.13.0/dist/sweetalert2.all.min.js"></script>
 
     <script>
         $(document).ready(function (){
@@ -47,10 +49,14 @@
         <div class="row">
             <div class="col">
                 <?php 
-                    echo '<p style="font-size:1.3rem;margin:0%">';
-                    echo 'ชื่อ-สกุล นักเรียน <b>'.$student_data["เพศ"].$student_data["ชื่อ"].' '.$student_data["สกุล"];
-                    echo '</b> ห้อง <b>'.$student_data["ห้อง"].'</b> เลขประจำตัว <b>'.$student_data["เลขประจำตัว"].'</b>';
-                    echo '</p>';
+                    if($_SESSION['id_name']!="Undefined"){
+                        echo '<p style="font-size:1.3rem;margin:0%">';
+                        echo 'ชื่อ-สกุล นักเรียน <b>'.$student_data["เพศ"].$student_data["ชื่อ"].' '.$student_data["สกุล"];
+                        echo '</b> ห้อง <b>'.$student_data["ห้อง"].'</b> เลขประจำตัว <b>'.$student_data["เลขประจำตัว"].'</b>';
+                        echo '</p>';
+                    }else{
+                        echo '<p style="font-size:5rem">กรุณาเข้าสู่ระบบอีกครั้ง</p>';
+                    }
                 ?>
             </div>
         </div>
@@ -64,37 +70,54 @@
                 <div class="col-1 border"><b>ร้อยละ</b></div>      
             </div>
             <?php 
-                $class_student = 'c_'.$student_data["ห้อง"];
-                $sql_student_info = "SELECT * FROM $class_student WHERE เลขประจำตัว = '$student_id'";
-                $result_student = ($db->query($sql_student_info))->fetch_assoc();
-                $sql_student_max = "SELECT * FROM $class_student WHERE เลขประจำตัว = 'max_student'";
-                $result_student_max = ($db->query($sql_student_max))->fetch_assoc();
+                if($_COOKIE["role"]!=1){
+                    //echo $_COOKIE["role"];
+                    ?>
+                        <script>
+                            const Toast = Swal.mixin({
+                                timer: 3000,
+                                timerProgressBar: true
+                            })
+                
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'กรุณาเข้าสู่ระบบอีกครั้ง'
+                            })
+                            setTimeout(()=>{window.location.href = "index.php"},3000);
+                        </script>
+                    <?php
+                }
+                if($_SESSION['id_name']!="Undefined"){
+                    $class_student = 'c_'.$student_data["ห้อง"];
+                    $sql_student_info = "SELECT * FROM $class_student WHERE เลขประจำตัว = '$student_id'";
+                    $result_student = ($db->query($sql_student_info))->fetch_assoc();
+                    $sql_student_max = "SELECT * FROM $class_student WHERE เลขประจำตัว = 'max_student'";
+                    $result_student_max = ($db->query($sql_student_max))->fetch_assoc();
 
-                $q_get_table = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$class_student' ORDER BY ORDINAL_POSITION";
-                $result_q_get_table = $db->query($q_get_table);
+                    $q_get_table = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$class_student' ORDER BY ORDINAL_POSITION";
+                    $result_q_get_table = $db->query($q_get_table);
 
-                $cnt_row = 1;
-                while($row = $result_q_get_table->fetch_assoc()){
-                    if($row["COLUMN_NAME"] != 'เลขประจำตัว' ){
-                        $sbj = $row["COLUMN_NAME"];
-                        echo '<div class="row">';
-                        echo '<div class="col-1 border">'.$cnt_row.'</div>';
-                        echo '<div class="col-3 border">'.$row["COLUMN_NAME"].'</div>';
-                        echo '<div class="col-1 border">'.$result_student_max[$sbj].'</div>';
-                        echo '<div class="col-1 border">'.$result_student[$sbj].'</div>';
-                        $pct = '';
-                        if((int)$result_student_max[$sbj]!=0){
-                            $pct = round((int)$result_student[$sbj]/(int)$result_student_max[$sbj]*100,2);
-                        }else{
-                            $pct = 'Nan';
+                    $cnt_row = 1;
+                    while($row = $result_q_get_table->fetch_assoc()){
+                        if($row["COLUMN_NAME"] != 'เลขประจำตัว' ){
+                            $sbj = $row["COLUMN_NAME"];
+                            echo '<div class="row">';
+                            echo '<div class="col-1 border">'.$cnt_row.'</div>';
+                            echo '<div class="col-3 border">'.$row["COLUMN_NAME"].'</div>';
+                            echo '<div class="col-1 border">'.$result_student_max[$sbj].'</div>';
+                            echo '<div class="col-1 border">'.$result_student[$sbj].'</div>';
+                            $pct = '';
+                            if((int)$result_student_max[$sbj]!=0){
+                                $pct = round((int)$result_student[$sbj]/(int)$result_student_max[$sbj]*100,2);
+                            }else{
+                                $pct = 'Nan';
+                            }
+                            echo '<div class="col-1 border">'.$pct.'</div>'; 
+                            echo '</div>';
+                            $cnt_row++;
                         }
-                        echo '<div class="col-1 border">'.$pct.'</div>'; 
-                        echo '</div>';
-                        $cnt_row++;
                     }
                 }
-                
-                
             ?>
         </div>
     </div>

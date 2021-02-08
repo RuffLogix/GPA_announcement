@@ -22,14 +22,6 @@
         }
     </style>
 
-    <script>
-
-        import Swal from 'sweetalert2';
-
-        const Swal = require('sweetalert2');
-
-    </script>
-
     <?php   
 
         include 'db.php';
@@ -129,7 +121,7 @@
             $sql = "SELECT * FROM student_info WHERE เลขประจำตัว='$user'"; //ค้นหา เลขประจำตัว ที่เหมือนกับ ที่รับค่าเข้ามา;
             $result = $db->query($sql);
 
-            if(mysqli_num_rows($result)==1){ //ถ้าข้อมูลแสดง 1 แถว เข้า เงื่อนไข
+            if($result->num_rows==1){
                 $row = mysqli_fetch_assoc($result); //ให้ row เก็บข้อมูลของทั้งแถว
                 $chk_password = strval($row["ห้อง"]).strval($row["เลขที่"]); //ตัวแปรเช็ค password
 
@@ -154,6 +146,7 @@
                 $_SESSION["id_name"] = $_POST["username"];
                 ?>
                     <script>
+                        document.cookie = "role=1";
                         const Toast = Swal.mixin({
                             timer: 3000,
                             timerProgressBar: true
@@ -167,6 +160,29 @@
                     </script>
                 <?php
                 //echo $row["ชื่อ"].' '.$row["สกุล"].$chk_password; //debug เฉยๆ :)
+            }
+            $pw = $_POST["password"];
+            $sql = "SELECT * FROM teacher_info WHERE ชื่อ='$user' and รหัสวิชา='$pw' "; //ค้นหา เลขประจำตัว ที่เหมือนกับ ที่รับค่าเข้ามา;
+            $result = $db->query($sql);
+
+            if($result->num_rows>=1){ // role = 1 คือ นักเรียน role = 2 คือ ครู role = 3 คือ root
+                $_SESSION["id_name"] = "Undefined";
+                $_SESSION["teacher_name"] = $_POST["username"];
+                ?>
+                    <script>
+                        document.cookie = "role=2";
+                        const Toast = Swal.mixin({
+                            timer: 3000,
+                            timerProgressBar: true
+                        })
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'เข้าสู่ระบบสำเร็จ'
+                        })
+                        setTimeout(()=>{window.location.href = "teacher_page.php"},3000);
+                    </script>
+                <?php
             }else{
                 ?>
                     <script>

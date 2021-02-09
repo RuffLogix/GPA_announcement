@@ -6,6 +6,9 @@
     $sql = "SELECT * FROM student_info WHERE เลขประจำตัว = '$student_id'";
     $result =  $db->query($sql);
     $student_data = $result->fetch_assoc();
+    
+     error_reporting(0); ini_set('display_errors', 0);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,10 +28,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.13.0/dist/sweetalert2.all.min.js"></script>
 
     <script>
+        let d = new Date();
         $(document).ready(function (){
-            let d = new Date();
             let m = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฏาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤษจิกายน", "ธันวาคม"];
-            $("#title_").text("ภาคเรียนที่ 2 ปีการศึกษา 2563 ข้อมูล วันที่ "+d.getDay()+" "+m[d.getMonth()]+ " "+(d.getFullYear()+543));
+            $("#title_").text("ภาคเรียนที่ 2 ปีการศึกษา 2563 ข้อมูล วันที่ "+d.getDate()+" "+m[d.getMonth()]+ " "+(d.getFullYear()+543));
         });
     </script>
 </head>
@@ -49,44 +52,43 @@
         <div class="row">
             <div class="col">
                 <?php 
-                    if($_SESSION['id_name']!="Undefined"){
+                    if($_SESSION["role"]==1 or $_SESSION['id_name']!="Undefined" or !isset($_SESSION["role"])){
                         echo '<p style="font-size:1.3rem;margin:0%">';
                         echo 'ชื่อ-สกุล นักเรียน <b>'.$student_data["เพศ"].$student_data["ชื่อ"].' '.$student_data["สกุล"];
                         echo '</b> ห้อง <b>'.$student_data["ห้อง"].'</b> เลขประจำตัว <b>'.$student_data["เลขประจำตัว"].'</b>';
                         echo '</p>';
                     }else{
+                        
                         echo '<p style="font-size:5rem">กรุณาเข้าสู่ระบบอีกครั้ง</p>';
+                        ?>
+                            <script>
+                                const Toast = Swal.mixin({
+                                    timer: 1000,
+                                    timerProgressBar: true
+                                })
+                    
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: 'กรุณาเข้าสู่ระบบอีกครั้ง'
+                                })
+                                setTimeout(()=>{window.location.href = "index.php"},1000);
+                            </script>
+                        <?php
                     }
                 ?>
             </div>
         </div>
 
-        <div class="report-data" style="margin:0;width:100%;margin-left:22%;margin-top:1rem;text-align: center;">
+        <div class="report-data" style="margin:0;width:100%;margin-left:10%;margin-top:1rem;text-align: center;">
             <div class="row">
                 <div class="col-1 border"><b>วิชาที่</b></div>
                 <div class="col-3 border"><b>รหัสวิชา</b></div>    
-                <div class="col-1 border"><b>เต็ม</b></div>    
-                <div class="col-1 border"><b>ได้</b></div>    
-                <div class="col-1 border"><b>ร้อยละ</b></div>      
+                <div class="col-2 border"><b>เต็ม</b></div>    
+                <div class="col-2 border"><b>ได้</b></div>    
+                <div class="col-2 border"><b>ร้อยละ</b></div>      
             </div>
             <?php 
-                if($_COOKIE["role"]!=1){
-                    //echo $_COOKIE["role"];
-                    ?>
-                        <script>
-                            const Toast = Swal.mixin({
-                                timer: 3000,
-                                timerProgressBar: true
-                            })
                 
-                            Toast.fire({
-                                icon: 'error',
-                                title: 'กรุณาเข้าสู่ระบบอีกครั้ง'
-                            })
-                            setTimeout(()=>{window.location.href = "index.php"},3000);
-                        </script>
-                    <?php
-                }
                 if($_SESSION['id_name']!="Undefined"){
                     $class_student = 'c_'.$student_data["ห้อง"];
                     $sql_student_info = "SELECT * FROM $class_student WHERE เลขประจำตัว = '$student_id'";
@@ -104,15 +106,15 @@
                             echo '<div class="row">';
                             echo '<div class="col-1 border">'.$cnt_row.'</div>';
                             echo '<div class="col-3 border">'.$row["COLUMN_NAME"].'</div>';
-                            echo '<div class="col-1 border">'.$result_student_max[$sbj].'</div>';
-                            echo '<div class="col-1 border">'.$result_student[$sbj].'</div>';
+                            echo '<div class="col-2 border">'.$result_student_max[$sbj].'</div>';
+                            echo '<div class="col-2 border">'.$result_student[$sbj].'</div>';
                             $pct = '';
                             if((int)$result_student_max[$sbj]!=0){
                                 $pct = round((int)$result_student[$sbj]/(int)$result_student_max[$sbj]*100,2);
                             }else{
                                 $pct = 'Nan';
                             }
-                            echo '<div class="col-1 border">'.$pct.'</div>'; 
+                            echo '<div class="col-2 border">'.$pct.'</div>'; 
                             echo '</div>';
                             $cnt_row++;
                         }

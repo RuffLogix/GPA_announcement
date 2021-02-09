@@ -1,5 +1,7 @@
 <?php 
     session_start();
+
+    error_reporting(0); ini_set('display_errors', 0);
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +25,6 @@
     </style>
 
     <?php   
-
         include 'db.php';
         if(!$db->error){
             echo '.';
@@ -33,7 +34,7 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 3000,
+                timer: 1000,
                 timerProgressBar: true,
                 didOpen: (toast) => {
                     toast.addEventListener('mouseenter', Swal.stopTimer)
@@ -55,7 +56,7 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 3000,
+                timer: 1000,
                 timerProgressBar: true,
                 didOpen: (toast) => {
                     toast.addEventListener('mouseenter', Swal.stopTimer)
@@ -114,6 +115,7 @@
     </div>
 
     <?php
+        
         include 'db.php';
         if(isset($_POST['username']) and isset($_POST['password']) and $_SERVER["REQUEST_METHOD"]=="POST"){
 
@@ -129,7 +131,7 @@
                     ?>
                         <script>
                             const Toast = Swal.mixin({
-                                timer: 3000,
+                                timer: 1000,
                                 timerProgressBar: true
                             })
 
@@ -138,17 +140,18 @@
                                 title: 'ชื่อผู้ใช้/รหัสผ่าน ไม่ถูกต้อง'
                             })
 
-                            setTimeout(()=>{window.location.href = "index.php"},3000);
+                            setTimeout(()=>{window.location.href = "index.php"},1000);
                         </script>
                     <?php
                 }
 
                 $_SESSION["id_name"] = $_POST["username"];
+                $_SESSION["role"] = 1;
                 ?>
                     <script>
-                        document.cookie = "role=1";
+                        
                         const Toast = Swal.mixin({
-                            timer: 3000,
+                            timer: 1000,
                             timerProgressBar: true
                         })
 
@@ -156,7 +159,7 @@
                             icon: 'success',
                             title: 'เข้าสู่ระบบสำเร็จ'
                         })
-                        setTimeout(()=>{window.location.href = "show_result.php"},3000);
+                        setTimeout(()=>{window.location.href = "show_result.php"},1000);
                     </script>
                 <?php
                 //echo $row["ชื่อ"].' '.$row["สกุล"].$chk_password; //debug เฉยๆ :)
@@ -168,11 +171,12 @@
             if($result->num_rows>=1){ // role = 1 คือ นักเรียน role = 2 คือ ครู role = 3 คือ root
                 $_SESSION["id_name"] = "Undefined";
                 $_SESSION["teacher_name"] = $_POST["username"];
+                $_SESSION["role"] = 2;
                 ?>
                     <script>
-                        document.cookie = "role=2";
+                        
                         const Toast = Swal.mixin({
-                            timer: 3000,
+                            timer: 1000,
                             timerProgressBar: true
                         })
 
@@ -180,23 +184,25 @@
                             icon: 'success',
                             title: 'เข้าสู่ระบบสำเร็จ'
                         })
-                        setTimeout(()=>{window.location.href = "teacher_page.php"},3000);
+                        setTimeout(()=>{window.location.href = "teacher_page.php"},1000);
                     </script>
                 <?php
             }else{
+                $_SESSION["role"] = -1;
                 ?>
                     <script>
                         const Toast = Swal.mixin({
-                            timer: 3000,
+                            timer: 1000,
                             timerProgressBar: true
                         })
-
+                        
+                    
                         Toast.fire({
                             icon: 'error',
                             title: 'ชื่อผู้ใช้/รหัสผ่าน ไม่ถูกต้อง'
                         })
 
-                        setTimeout(()=>{window.location.href = "index.php"},3000);
+                        setTimeout(()=>{window.location.href = "index.php"},1000);
                     </script>
                 <?php
             }

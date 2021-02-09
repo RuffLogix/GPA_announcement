@@ -1,3 +1,7 @@
+<?php 
+     error_reporting(0); ini_set('display_errors', 0);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +18,9 @@
    
     <link rel="stylesheet" href="css/add_teacher_info.css">
 
+    <!--Import SweetAleart2-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.13.0/dist/sweetalert2.all.min.js"></script>
+
     <script src="js/del_btn.js"></script>
 
     <script>
@@ -22,7 +29,7 @@
             $('#add_btn').click(function (){
                 i++;
                 document.cookie = "btn_value="+i;
-                $('.add_subject').append('<div class="row" style="margin-top:0.5rem" id="row-box-'+i+'"><div class="col"><input type="text" placeholder="รหัสวิชา (ว11101)" class="form-control" id="inp-box-'+i+'" required name="subject-code'+i+'"></div><div class="col"><input type="text" placeholder="ห้องที่สอน (เช่น 1 ถ้ามีหลายห้องให้เว้นวรรค)" class="form-control" id="credit'+i+'" required name="class-'+i+'"></div><div class="col d-grid"><input type="button" value="ลบ" class="btn btn-danger" onclick="del_box('+i+')" id="del-btn-'+i+'"></div></div>');
+                $('.add_subject').append('<div class="row" style="margin-top:0.5rem" id="row-box-'+i+'"><div class="col"><input type="text" placeholder="รหัสวิชา (ว11101)" class="form-control" id="inp-box-'+i+'" required name="subject-code'+i+'"></div><div class="col"><input type="text" placeholder="ห้องที่สอน (เช่น 1 ถ้ามีหลายห้องให้ใส่ ,)" class="form-control" id="credit'+i+'" required name="class-'+i+'"></div><div class="col d-grid"><input type="button" value="ลบ" class="btn btn-danger" onclick="del_box('+i+')" id="del-btn-'+i+'"></div></div>');
             });
         });
     </script>
@@ -42,11 +49,27 @@
             </div>
 
             <div class="row submit-button">
-                <div class="col d-grid"><input type="submit" class="btn btn-danger"></div>
+                <div class="col d-grid"><input type="submit" class="btn btn-danger" <?php if($_SESSION["role"]!=3)echo 'disabled'?>></div>
             </div>
         </form>
 
         <?php 
+            if($_SESSION["role"]!=3){
+                ?>
+                    <script>
+                        const Toast = Swal.mixin({
+                            timer: 1000,
+                            timerProgressBar: true
+                        })
+        
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'กรุณาเข้าสู่ระบบอีกครั้ง'
+                        })
+                        setTimeout(()=>{window.location.href = "index.php"},1000);
+                    </script>
+                <?php
+            }
             include 'db.php';
             if($_SERVER["REQUEST_METHOD"]=="POST"){
                 for($i=1 ; $i<=$_COOKIE["btn_value"] ; $i++){

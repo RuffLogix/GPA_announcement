@@ -1,3 +1,7 @@
+<?php 
+     error_reporting(0); ini_set('display_errors', 0);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +15,9 @@
 
     <!--Import JQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!--Import SweetAleart2-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.13.0/dist/sweetalert2.all.min.js"></script>
     
     <script src="js/del_btn.js"></script>
     
@@ -31,7 +38,24 @@
 </head>
 <body>
     <div class="container d-gird" style="margin-top:8%;width:30rem">
-
+        <?php 
+            if($_SESSION["role"]!=3){
+                ?>
+                    <script>
+                        const Toast = Swal.mixin({
+                            timer: 1000,
+                            timerProgressBar: true
+                        })
+        
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'กรุณาเข้าสู่ระบบอีกครั้ง'
+                        })
+                        setTimeout(()=>{window.location.href = "index.php"},1000);
+                    </script>
+                <?php
+            }
+        ?>
         <div class="title">
             <center>
                 <h2>สร้างฐานข้อมูล</h2>
@@ -57,7 +81,7 @@
             </div>
 
             <div class="d-grid row" style="padding:0;margin-top:0.5rem">
-                <button type="submit" class="btn btn-danger" name="" id="">สร้างฐานข้อมูล (Create Database)</button>
+                <button type="submit" class="btn btn-danger" name="" id="" <?php if($_SESSION["role"]!=3)echo 'disabled'?>>สร้างฐานข้อมูล (Create Database)</button>
             </div>
 
         </form>

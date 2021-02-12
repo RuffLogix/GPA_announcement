@@ -1,5 +1,6 @@
 <?php 
      error_reporting(0); ini_set('display_errors', 0);
+     session_start();
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +40,7 @@
 <body>
     <div class="container d-gird" style="margin-top:8%;width:30rem">
         <?php 
-            if($_SESSION["role"]!=3){
+            if($_SESSION["role"]!=3){ //ค่อยแก้ทีหลัง
                 ?>
                     <script>
                         const Toast = Swal.mixin({
